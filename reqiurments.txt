@@ -1,0 +1,4 @@
+Django
+psycopg2_binary
+pillow
+ipython
