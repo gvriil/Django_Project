@@ -1,10 +1,32 @@
 {% extends 'catalog/base.html' %}
-
+{% load custom_tags %}
 {% block content %}
-  <div class="container">
+<div class="container">
     <h2>{{ product.name }}</h2>
     <p>{{ product.description }}</p>
     <p>Цена: {{ product.price }} руб</p>
+    <img src="{{ product.picture | image_filter }}" alt="{{ product.name }}" class="img-thumbnail">
 
-  </div>
+</div>
+<div class="container text-center">
+    <div class="row row-cols-4">
+
+        {% for product in top%}
+        <div class="col">
+
+
+            <div class="card h-100" style="width: 20rem;" >
+                <img src="{{ product.picture | image_filter }}" style="height:18rem"
+                     class="card-img-top object-fit-cover" alt="{{ product.name }}" >
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <a href="{% url 'catalog:product_detail' product.id %}"
+                       class="stretched-link"> &nbsp;</a>
+                </div>
+            </div>
+        </div>
+
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

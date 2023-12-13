@@ -1,5 +1,5 @@
 {% extends 'catalog/base.html' %}
-
+{% load custom_tags %}
 {% block content %}
 
 <h2 class="mb-4">Каталог</h2>
@@ -13,10 +13,55 @@
         </div>
         <div class="card-body">
             <h1 class="card-title pricing-card-title">{{ product.price }} руб </h1>
-            <img src="{{ product.picture.url }}" alt="{{ product.name }}" class="img-thumbnail">
-            <button type="button" class="btn btn-lg btn-block btn-outline-primary">Купить</button>
+            <img src="{{ product.picture | image_filter }}" alt="{{ product.name }}"
+                 class="img-thumbnail">
+            <a class="btn btn-lg btn-block btn-outline-primary"
+               href="{% url 'catalog:product_detail' product.id %}"> детали </a>
+            <button type="button" class="btn btn-lg btn-block btn-outline-primary">купить</button>
         </div>
     </div>
 </div>
 {% endfor %}
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        {% if new_products.has_previous %}
+
+        <li class="page-item ">
+            <a class="page-link" href="?page={{ new_products.previous_page_number }}"
+               aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" href="#"
+               aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        {% endif %}
+
+        {% for page in new_products.paginator.page_range %}
+        {% if new_products.number == page %}
+        <li class="page-item active"><a class="page-link" href="#">{{ page }}</a></li>
+        {% else %}
+        <li class="page-item"><a class="page-link" href="?page={{ page }}">{{ page }}</a></li>
+        {% endif %}
+        {% endfor %}
+        {% if new_products.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ new_products.next_page_number }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        {% endif %}
+
+    </ul>
+</nav>
 {% endblock %}
