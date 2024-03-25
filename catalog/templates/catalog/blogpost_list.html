@@ -1,28 +1,37 @@
 {% extends 'catalog/base.html' %}
+{% load static %}  <!-- Add this if you plan to use static files like CSS or JavaScript -->
 {% block content %}
 
 <div class="container">
     <div class="row mb-5">
-        <div class="col-12">
+        <div class="col-12 d-flex justify-content-between align-items-center">
             <h2>Recent Posts</h2>
             <a href="{% url 'catalog:blogpost_add' %}" class="btn btn-primary">Новая публикация</a>
         </div>
     </div>
-    <div class="row">
+    <div class="row g-4">
         {% for post in object_list %}
-        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
-            <div class="entry2">
-                {% if post.slug %}
-                <a href="{% url 'catalog:blogpost_detail' post.slug %}"><img src="{{ post.preview.url }}" alt="Image" class="img-fluid rounded"></a>
-                <div class="excerpt">
-                    <h2><a href="{% url 'catalog:blogpost_detail' post.slug %}">{{ post.title }}</a></h2>
-                    <!-- Additional post info here -->
-                </div>
+        <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="card h-100">
+                {% if post.preview %}
+                <img src="{{ post.preview.url }}" class="card-img-top" alt="{{ post.title }}">
                 {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <!-- Ensure the slug is present; otherwise, provide a fallback URL -->
+                        <a href="{% url 'catalog:blogpost_detail' post.slug %}">{{ post.title }}</a>
+                    </h5>
+                    <p class="card-text">{{ post.content|truncatewords:20 }}</p>
+                </div>
+                <div class="card-footer text-muted">
+                    Published on {{ post.created_at|date:"Y-m-d" }}
+                </div>
             </div>
         </div>
         {% empty %}
-        <div>No posts available.</div>
+        <div class="col-12">
+            <p>No posts available.</p>
+        </div>
         {% endfor %}
     </div>
 </div>

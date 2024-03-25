@@ -1,5 +1,3 @@
-import itertools
-
 from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
@@ -77,12 +75,8 @@ class Contacts(models.Model):
 
 
 class BlogPost(models.Model):
-    """
-    Represents a blog post with a title, slug, content, and preview image.
-    Includes the date of creation, publication status, and view count.
-    """
     title = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200, unique=True)
+    slug = models.SlugField(max_length=200, unique=True, blank=True)
     content = models.TextField()
     preview = models.ImageField(upload_to='blog_previews/', blank=True)
     created_at = models.DateTimeField(default=timezone.now)
@@ -91,15 +85,9 @@ class BlogPost(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = original = slugify(self.title)
-            for x in itertools.count(1):
-                if not BlogPost.objects.filter(slug=self.slug).exists():
-                    break
-                self.slug = f'{original}-{x}'
-        super().save(*args, **kwargs)
+            # Generate slug from title
+            self.slug = slugify(self.title)
+        super(BlogPost, self).save(*args, **kwargs)
 
     def __str__(self):
-        """
-        Returns the blog post title as a string.
-        """
         return self.title

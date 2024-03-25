@@ -1,8 +1,10 @@
 # catalog/views.py
 from django.core.paginator import Paginator
 from django.shortcuts import render
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
+from django.utils.text import slugify
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+
 from .models import Product, Contacts, BlogPost
 
 
@@ -80,12 +82,21 @@ class ProductDetailView(DetailView):
 
 class BlogPostListView(ListView):
     model = BlogPost
-    template_name = 'catalog/blogpost_list.html/'
+    template_name = 'blog/blogpost_list.html'
+
+    def get_queryset(self):
+        return BlogPost.objects.filter(is_published=True)
 
 
 class BlogPostDetailView(DetailView):
     model = BlogPost
     template_name = 'catalog/blogpost_detail.html'
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        obj.views_count += 1
+        obj.save()
+        return obj
 
 
 class BlogPostCreateView(CreateView):
@@ -94,11 +105,18 @@ class BlogPostCreateView(CreateView):
     template_name = 'catalog/blogpost_form.html/'
     success_url = reverse_lazy('catalog:blogpost_list')
 
+    def form_valid(self, form):
+        form.instance.slug = slugify(form.instance.title)
+        return super().form_valid(form)
+
+
 class BlogPostUpdateView(UpdateView):
     model = BlogPost
     fields = ['title', 'slug', 'content', 'preview', 'created_at', 'is_published', 'views_count']
     template_name = 'catalog/blogpost_form.html/'
-    success_url = reverse_lazy('catalog:blogpost_list')
+
+    def get_success_url(self):
+        return reverse('blogpost_detail', kwargs={'slug': self.object.slug})
 
 
 class BlogPostDeleteView(DeleteView):
