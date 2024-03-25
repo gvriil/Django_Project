@@ -1,0 +1,30 @@
+{% extends 'catalog/base.html' %}
+{% block content %}
+
+<div class="container">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2>Recent Posts</h2>
+            <a href="{% url 'catalog:blogpost_add' %}" class="btn btn-primary">Новая публикация</a>
+        </div>
+    </div>
+    <div class="row">
+        {% for post in object_list %}
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
+            <div class="entry2">
+                {% if post.slug %}
+                <a href="{% url 'catalog:blogpost_detail' post.slug %}"><img src="{{ post.preview.url }}" alt="Image" class="img-fluid rounded"></a>
+                <div class="excerpt">
+                    <h2><a href="{% url 'catalog:blogpost_detail' post.slug %}">{{ post.title }}</a></h2>
+                    <!-- Additional post info here -->
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div>No posts available.</div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

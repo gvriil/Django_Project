@@ -1,4 +1,30 @@
+
 {% extends 'catalog/base.html' %}
+<style>
+    .button-row {
+        text-align: center; /* Centers the buttons horizontally */
+        padding: 20px 0; /* Adds vertical padding for space above and below */
+    }
+
+    .action-button {
+        display: inline-block; /* Align buttons in a row */
+        margin: 0 15px; /* Adds horizontal spacing between buttons */
+        padding: 10px 25px; /* Proportional padding for width and height */
+        background-color: transparent; /* Transparent background */
+        color: #000; /* Default text color */
+        text-decoration: none; /* Removes underline from links */
+        border: 2px solid #000; /* Solid border with default color */
+        border-radius: 25px; /* Rounded corners */
+        transition: background-color 0.3s, color 0.3s; /* Smooth color transition on hover */
+        font-weight: bold; /* Makes the text bold */
+    }
+
+    .action-button:hover {
+        background-color: #000; /* Background color on hover */
+        color: #fff; /* Text color on hover */
+    }
+</style>
+
 {% load custom_tags %}
 {% block content %}
 <div class="container">
@@ -8,25 +34,32 @@
     <img src="{{ product.picture | image_filter }}" alt="{{ product.name }}" class="img-thumbnail">
 
 </div>
+<div class="container mt-4 text-center">
+    <div class="button-row">
+        <a href="{% url 'catalog:product_add' %}" class="action-button">Создать новый продукт</a>
+        <a href="{% url 'catalog:product_update' product.id %}" class="action-button">Редактировать</a>
+        <a href="{% url 'catalog:product_delete' product.id %}" class="action-button">Удалить</a>
+    </div>
+</div>
+
 <div class="container text-center">
     <div class="row row-cols-4">
 
-        {% for product in top%}
+        {% for top_product in top %}
         <div class="col">
-
-
-            <div class="card h-100" style="width: 20rem;" >
-                <img src="{{ product.picture | image_filter }}" style="height:18rem"
-                     class="card-img-top object-fit-cover" alt="{{ product.name }}" >
+            <div class="card h-100" style="width: 20rem;">
+                <img src="{{ top_product.picture | image_filter }}" style="height:18rem"
+                     class="card-img-top object-fit-cover" alt="{{ top_product.name }}">
                 <div class="card-body">
-                    <h5 class="card-title">{{ product.name }}</h5>
-                    <a href="{% url 'catalog:product_detail' product.id %}"
+                    <h5 class="card-title">{{ top_product.name }}</h5>
+                    <a href="{% url 'catalog:product_detail' top_product.id %}"
                        class="stretched-link"> &nbsp;</a>
                 </div>
             </div>
         </div>
-
         {% endfor %}
+
     </div>
 </div>
+
 {% endblock %}
