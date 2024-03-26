@@ -18,8 +18,12 @@
                 {% endif %}
                 <div class="card-body">
                     <h5 class="card-title">
-                        <!-- Ensure the slug is present; otherwise, provide a fallback URL -->
+                        {% if post.slug %}
                         <a href="{% url 'catalog:blogpost_detail' post.slug %}">{{ post.title }}</a>
+                        {% else %}
+                        <!-- Fallback for posts without slugs -->
+                        {{ post.title }}
+                        {% endif %}
                     </h5>
                     <p class="card-text">{{ post.content|truncatewords:20 }}</p>
                 </div>
@@ -33,6 +37,7 @@
             <p>No posts available.</p>
         </div>
         {% endfor %}
+
     </div>
 </div>
 

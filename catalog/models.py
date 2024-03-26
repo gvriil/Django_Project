@@ -1,7 +1,8 @@
+import unidecode as unidecode
 from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
-
+from unidecode import unidecode
 NULLABLE = {'blank': True, 'null': True}
 
 
@@ -32,6 +33,7 @@ class Product(models.Model):
     Includes information like name, description, image, price, and stock status.
     """
     name = models.CharField(max_length=100, verbose_name='наименование')
+    # slug = models.SlugField(max_length=200, unique=False, default='')
     description = models.TextField(verbose_name='описание')
     picture = models.ImageField(upload_to='products/', verbose_name='изображение', **NULLABLE)
     category = models.ForeignKey(Category, verbose_name='категория', on_delete=models.CASCADE)
@@ -39,6 +41,12 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='дата создания')
     last_modified = models.DateTimeField(auto_now=True, verbose_name='дата последнего изменения')
     in_stock = models.BooleanField(default=True, verbose_name='в наличии')
+
+    # def save(self, *args, **kwargs):
+    #     if not self.slug:  # If no slug is provided, generate one from the title
+    #
+    #         self.slug = slugify(unidecode(self.name))
+    #     super(Product, self).save(*args, **kwargs)
 
     def __str__(self):
         """
@@ -75,8 +83,12 @@ class Contacts(models.Model):
 
 
 class BlogPost(models.Model):
+    """
+    Represents a blog post with a title, slug, content, and preview image.
+    Includes the date of creation, publication status, and view count.
+    """
     title = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200, unique=True, blank=True)
+    slug = models.SlugField(max_length=200, unique=True)
     content = models.TextField()
     preview = models.ImageField(upload_to='blog_previews/', blank=True)
     created_at = models.DateTimeField(default=timezone.now)
@@ -84,10 +96,13 @@ class BlogPost(models.Model):
     views_count = models.IntegerField(default=0)
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            # Generate slug from title
-            self.slug = slugify(self.title)
+        if not self.slug:  # If no slug is provided, generate one from the title
+
+            self.slug = slugify(unidecode(self.title))
         super(BlogPost, self).save(*args, **kwargs)
 
     def __str__(self):
+        """
+        Returns the blog post title as a string.
+        """
         return self.title

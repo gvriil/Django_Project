@@ -1,10 +1,12 @@
 # catalog/views.py
+from django.core.mail import send_mail
 from django.core.paginator import Paginator
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.utils.text import slugify
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
+from config import settings
 from .models import Product, Contacts, BlogPost
 
 
@@ -83,8 +85,10 @@ class ProductDetailView(DetailView):
 class BlogPostListView(ListView):
     model = BlogPost
     template_name = 'blog/blogpost_list.html'
+    context_object_name = 'posts'
 
     def get_queryset(self):
+        """Возвращаем только опубликованные статьи."""
         return BlogPost.objects.filter(is_published=True)
 
 
@@ -92,10 +96,24 @@ class BlogPostDetailView(DetailView):
     model = BlogPost
     template_name = 'catalog/blogpost_detail.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        pk = self.kwargs.get('pk')
+        context['top'] = Product.objects.order_by('-created_at').exclude(id=pk)[:4]
+        return context
+
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
         obj.views_count += 1
         obj.save()
+        if obj.views_count == 100:
+            send_mail(
+                'Поздравление с достижением!',
+                'Статья "{}" достигла 100 просмотров.'.format(obj.title),
+                settings.DEFAULT_FROM_EMAIL,
+                ['your_email@yandex.ru'],
+                fail_silently=False,
+            )
         return obj
 
 
