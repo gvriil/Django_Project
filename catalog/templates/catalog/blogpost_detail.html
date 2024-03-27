@@ -7,8 +7,8 @@
     {% endif %}
     <p>{{ object.content }}</p>
     <div>
-        <a href="{% url 'catalog:blogpost_edit' object.slug %}" class="btn btn-primary">Edit</a>
-        <a href="{% url 'catalog:blogpost_delete' object.slug %}" class="btn btn-danger">Delete</a>
+        <a href="{% url 'catalog:blogpost_edit' object.pk %}" class="btn btn-primary">Редактировать</a>
+        <a href="{% url 'catalog:blogpost_delete' object.pk %}" class="btn btn-danger">Удалить</a>
     </div>
 </div>
 {% endblock %}

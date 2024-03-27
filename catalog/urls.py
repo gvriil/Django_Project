@@ -15,7 +15,7 @@ urlpatterns = [
     path('product/<int:pk>/delete/', ProductDeleteView.as_view(), name='product_delete'),
     path('blog/', views.BlogPostListView.as_view(), name='blogpost_list'),  # Список постов
     path('blog/add/', views.BlogPostCreateView.as_view(), name='blogpost_add'),  # Add post
-    path('blog/<slug:slug>/', views.BlogPostDetailView.as_view(), name='blogpost_detail'),
-    path('blog/<slug:slug>/edit/', BlogPostUpdateView.as_view(), name='blogpost_edit'),
-    path('blog/<slug:slug>/delete', BlogPostDeleteView.as_view(), name='blogpost_delete'),
+    path('blog/<int:pk>/', views.BlogPostDetailView.as_view(), name='blogpost_detail'),
+    path('blog/<int:pk>/edit/', BlogPostUpdateView.as_view(), name='blogpost_edit'),
+    path('blog/<int:pk>/delete', BlogPostDeleteView.as_view(), name='blogpost_delete'),
 ]
