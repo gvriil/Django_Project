@@ -130,11 +130,11 @@ class BlogPostCreateView(CreateView):
 
 class BlogPostUpdateView(UpdateView):
     model = BlogPost
-    fields = ['title', 'slug', 'content', 'preview', 'created_at', 'is_published', 'views_count']
+    fields = ['title', 'content', 'preview', 'created_at', 'is_published', 'views_count']
     template_name = 'catalog/blogpost_form.html/'
 
     def get_success_url(self):
-        return reverse('blogpost_detail', kwargs={'slug': self.object.slug})
+        return reverse('catalog:blogpost_detail', kwargs={'slug': self.object.slug})
 
 
 class BlogPostDeleteView(DeleteView):

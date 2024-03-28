@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 from unidecode import unidecode
+
 NULLABLE = {'blank': True, 'null': True}
 
 
@@ -33,7 +34,7 @@ class Product(models.Model):
     Includes information like name, description, image, price, and stock status.
     """
     name = models.CharField(max_length=100, verbose_name='наименование')
-    # slug = models.SlugField(max_length=200, unique=False, default='')
+    slug = models.SlugField(max_length=200, unique=False, default='')
     description = models.TextField(verbose_name='описание')
     picture = models.ImageField(upload_to='products/', verbose_name='изображение', **NULLABLE)
     category = models.ForeignKey(Category, verbose_name='категория', on_delete=models.CASCADE)
@@ -42,11 +43,13 @@ class Product(models.Model):
     last_modified = models.DateTimeField(auto_now=True, verbose_name='дата последнего изменения')
     in_stock = models.BooleanField(default=True, verbose_name='в наличии')
 
-    # def save(self, *args, **kwargs):
-    #     if not self.slug:  # If no slug is provided, generate one from the title
-    #
-    #         self.slug = slugify(unidecode(self.name))
-    #     super(Product, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        if not self.slug:  # If no slug is provided, generate one from the title
+
+            self.slug = slugify(unidecode(self.name))
+        super(Product, self).save(*args, **kwargs)
+
+
 
     def __str__(self):
         """
@@ -95,11 +98,16 @@ class BlogPost(models.Model):
     is_published = models.BooleanField(default=False)
     views_count = models.IntegerField(default=0)
 
-    def save(self, *args, **kwargs):
-        if not self.slug:  # If no slug is provided, generate one from the title
+    # def save(self, *args, **kwargs):
+    #     if not self.slug:  # If no slug is provided, generate one from the title
+    #
+    #         self.slug = slugify(unidecode(self.title))
+    #     super(BlogPost, self).save(*args, **kwargs)
 
-            self.slug = slugify(unidecode(self.title))
-        super(BlogPost, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        # Генерируем и обновляем слаг при каждом сохранении объекта
+        self.slug = slugify(unidecode(self.title))
+        super().save(*args, **kwargs)
 
     def __str__(self):
         """
