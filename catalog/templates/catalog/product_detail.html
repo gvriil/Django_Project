@@ -24,27 +24,33 @@
     }
 
 
+
+
 </style>
 
 {% load custom_tags %}
 {% block content %}
 <div class="container">
+
     <h2>{{ product.name }}</h2>
     <p>{{ product.description }}</p>
-    <p>Цена: {{ product.price }} руб</p>
-    <img src="{{ product.picture | image_filter }}" alt="{{ product.name }}" class="img-thumbnail">
+    <p>цена: {{ product.price }} р.</p>
+    <div class="card mb-4 box-shadow">
 
-</div>
-<div class="container mt-2 text-center">
-    <div class="button-row">
-        <a href="{% url 'catalog:product_add' %}" type="button"
-           class="btn btn-outline-primary btn-sm">Создать новый продукт</a>
-        <a href="{% url 'catalog:product_update' product.id %}"
-           type="button" class="btn btn-outline-warning btn-sm">Редактировать</a>
-        <a href="{% url 'catalog:product_delete' product.id %}" type="button"
-           class="btn btn-outline-danger btn-sm">Удалить</a>
     </div>
+    <img src="{{ product.picture | image_filter }}" alt="{{ product.name }}" class="img-thumbnail">
+<div class="card-footer">
+    <div class="button-row">
+            <a href="{% url 'catalog:product_add' %}" type="button"
+               class="btn btn-outline-success btn-sm">добавить </a>
+            <a href="{% url 'catalog:product_update' product.id %}"
+               class="btn btn-outline-warning btn-sm">изменить</a>
+            <a href="{% url 'catalog:product_delete' product.id %}" type="button"
+               class="btn btn-outline-danger btn-sm">удалить</a>
+        </div>
 </div>
+</div>
+
 <div class="mt-3 mb-3">
 </div>
 
@@ -66,6 +72,7 @@
         {% endfor %}
 
     </div>
+
 </div>
 
 {% endblock %}
