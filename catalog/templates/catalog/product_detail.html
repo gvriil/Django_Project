@@ -1,28 +1,26 @@
 {% extends 'catalog/base.html' %}
+
 <style>
-    .button-row {
-        text-align: center; /* Centers the buttons horizontally */
-        padding: 20px 0; /* Adds vertical padding for space above and below */
-    }
-
-    .action-button {
-        display: inline-block; /* Align buttons in a row */
-        margin: 0 15px; /* Adds horizontal spacing between buttons */
-        padding: 10px 25px; /* Proportional padding for width and height */
-        background-color: transparent; /* Transparent background */
-        color: #000; /* Default text color */
-        text-decoration: none; /* Removes underline from links */
-        border: 2px solid #000; /* Solid border with default color */
-        border-radius: 25px; /* Rounded corners */
-        transition: background-color 0.3s, color 0.3s; /* Smooth color transition on hover */
-        font-weight: bold; /* Makes the text bold */
-    }
-
-    .action-button:hover {
-        background-color: #000; /* Background color on hover */
-        color: #fff; /* Text color on hover */
-    }
-
+.button-row {
+    text-align: center; /* Центрирует кнопки по горизонтали */
+    padding: 20px 0; /* Добавляет вертикальный отступ сверху и снизу */
+}
+.action-button {
+    display: inline-block; /* Выравнивает кнопки в строку */
+    margin: 0 15px; /* Добавляет горизонтальные отступы между кнопками */
+    padding: 10px 25px; /* Пропорциональные отступы для ширины и высоты */
+    background-color: transparent; /* Прозрачный фон */
+    color: #000; /* Цвет текста по умолчанию */
+    text-decoration: none; /* Убирает подчеркивание у ссылок */
+    border: 2px solid #000; /* Твердая граница */
+    border-radius: 25px; /* Скругленные углы */
+    transition: background-color 0.3s, color 0.3s; /* Плавный переход цвета при наведении */
+    font-weight: bold; /* Жирный текст */
+}
+.action-button:hover {
+    background-color: #000; /* Цвет фона при наведении */
+    color: #fff; /* Цвет текста при наведении */
+}
 
 </style>
 
@@ -31,41 +29,34 @@
 <div class="container">
     <h2>{{ product.name }}</h2>
     <p>{{ product.description }}</p>
-    <p>Цена: {{ product.price }} руб</p>
+    <p>Цена: {{ product.price }} р.</p>
     <img src="{{ product.picture | image_filter }}" alt="{{ product.name }}" class="img-thumbnail">
 
-</div>
-<div class="container mt-2 text-center">
     <div class="button-row">
-        <a href="{% url 'catalog:product_add' %}" type="button"
-           class="btn btn-outline-primary btn-sm">Создать новый продукт</a>
-        <a href="{% url 'catalog:product_update' product.id %}"
-           type="button" class="btn btn-outline-warning btn-sm">Редактировать</a>
-        <a href="{% url 'catalog:product_delete' product.id %}" type="button"
-           class="btn btn-outline-danger btn-sm">Удалить</a>
+        <a href="{% url 'catalog:product_add' %}" class="btn btn-sm btn-outline-secondary">добавить</a>
+        <a href="{% url 'catalog:product_update' product.id %}" class="btn btn-sm btn-outline-secondary">изменить</a>
+        <a href="{% url 'catalog:product_delete' product.id %}" class="btn btn-sm btn-outline-secondary">удалить</a>
     </div>
-</div>
-<div class="mt-3 mb-3">
-</div>
 
-<div class="container text-center">
-    <div class="row row-cols-4">
+    <div class="mt-3 mb-3">
+        <!-- Дополнительный контент или разделители можно добавить здесь -->
+    </div>
 
-        {% for top_product in top %}
-        <div class="col">
-            <div class="card h-100" style="width: 20rem;">
-                <img src="{{ top_product.picture | image_filter }}" style="height:18rem"
-                     class="card-img-top object-fit-cover" alt="{{ top_product.name }}">
-                <div class="card-body">
-                    <h5 class="card-title">{{ top_product.name }}</h5>
-                    <a href="{% url 'catalog:product_detail' top_product.id %}"
-                       class="stretched-link"> &nbsp;</a>
+    <div class="container text-center">
+        <div class="row row-cols-4">
+            {% for top_product in top %}
+            <div class="col">
+                <div class="card h-100" style="width: 20rem;">
+                    <img src="{{ top_product.picture | image_filter }}" style="height:18rem"
+                         class="card-img-top object-fit-cover" alt="{{ top_product.name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ top_product.name }}</h5>
+                        <a href="{% url 'catalog:product_detail' top_product.id %}" class="btn btn-sm btn-outline-secondary">подробнее</a>
+                    </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-
     </div>
 </div>
-
 {% endblock %}

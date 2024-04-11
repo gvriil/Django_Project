@@ -1,68 +1,47 @@
 {% extends 'catalog/base.html' %}
-{% load custom_tags %}
 {% block content %}
-
 <h2 class="mb-4">Каталог</h2>
-
-{% for object in object_list %}
-
-<div class="col-3">
-    <div class="card mb-4 box-shadow">
-        <div class="card-header">
-            <h4 class="my-0 font-weight-normal">{{ object.name }}</h4>
-        </div>
-        <div class="card-body">
-            <h5 class="card-title pricing-card-title">{{ object.price }} руб </h5>
-            <img src="{{ object.picture | image_filter }}" alt="{{ object.name }}"
-                 class="img-thumbnail">
-            <div> {{ object.description | slice:":100" }}</div>
-            <a class="btn btn-lg btn-block btn-outline-primary"
-               href="{% url 'catalog:product_detail' object.id %}"> детали </a>
-            <button type="button" class="btn btn-lg btn-block btn-outline-primary">купить</button>
+<div class="row">
+    {% for product in products %}
+    <div class="col-md-4">
+        <div class="card mb-4 shadow-sm">
+            <img src="{{ product.picture.url }}" alt="{{ product.name }}" class="card-img-top">
+            <div class="card-body">
+                <h5>{{ product.name }}</h5>
+                {% if product.current_version %}
+                <p>Текущая версия: {{ product.current_version.version_number }}</p>
+                {% else %}
+                <p></p>
+                {% endif %}
+                <p>{{ product.description }}</p>
+                <div class="btn-group">
+                    <a href="{% url 'catalog:product_detail' product.id %}"
+                       class="btn btn-sm btn-outline-secondary">подробнее</a>
+                    <a href="" class="btn btn-sm btn-outline-secondary">купить</a>
+                </div>
+            </div>
         </div>
     </div>
+    {% empty %}
+    <p>Нет продуктов для отображения.</p>
+    {% endfor %}
 </div>
-{% endfor %}
 <nav aria-label="Page navigation example">
-    <ul class="pagination">
-        {% if object_list.has_previous %}
-
-        <li class="page-item ">
-            <a class="page-link" href="?page={{ object_list.previous_page_number }}"
-               aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        </li>
-        {% else %}
-        <li class="page-item disabled">
-            <a class="page-link" href="#"
-               aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
+    ххх
+    <ul class="pagination justify-content-center">
+        {% if products.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ products.previous_page_number }}">&laquo;</a>
         </li>
         {% endif %}
-
-        {% for page in object_list.paginator.page_range %}
-        {% if object_list.number == page %}
-        <li class="page-item active"><a class="page-link" href="#">{{ page }}</a></li>
-        {% else %}
-        <li class="page-item"><a class="page-link" href="?page={{ page }}">{{ page }}</a></li>
-        {% endif %}
+        {% for i in products.paginator.page_range %}
+        <li class="page-item {% if products.number == i %}active{% endif %}"><a class="page-link"
+                                                                                href="?page={{ i }}">{{
+            i }}</a></li>
         {% endfor %}
-        {% if object_list.has_next %}
-        <li class="page-item">
-            <a class="page-link" href="?page={{ object_list.next_page_number }}" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        </li>
-        {% else %}
-        <li class="page-item disabled">
-            <a class="page-link" href="#" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
+        {% if products.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ products.next_page_number }}">&raquo;</a>
         </li>
         {% endif %}
-
     </ul>
 </nav>
 {% endblock %}

@@ -1,8 +1,74 @@
 {% extends 'catalog/base.html' %}
 {% block content %}
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Сохранить</button>
-</form>
+<div class="container">
+    <form class="row" method="post" enctype="multipart/form-data">
+        <div class="col">
+            {% csrf_token %}
+            <div class="mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        {% if object %}Редактирование товара{% else %}Добавление товара{% endif %}
+                    </div>
+                    <div class="card-body">
+                        {{ form.as_p }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="mb-3">
+                <div class="card">
+                    <div class="card-header">Версии продукта</div>
+                    <div class="card-body">
+                        {{ formset.management_form }}
+                        {% for form in formset %}
+                        <div class="mb-2 p-2 border rounded">
+                            {{ form.as_p }}
+
+                            {% if not forloop.last %}
+                            <hr>
+                            {% endif %}
+                            {% endfor %}
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">сохранить</button>
+                        </div>
+                    </div>
+
+                </div>
+    </form>
+    <div class="row">
+        {% if object %}
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Управление версиями продукта</h3>
+            </div>
+            <div class="card-body">
+                {% for version in object.versions.all %}
+                <div class="mb-2">
+                    <span>Версия {{ version.version_number }}: {{ version.version_name }}</span>
+                    {% if version.is_current_version %}
+                    <strong>(Текущая)</strong>
+                    {% else %}
+                    <form method="post" action="{% url 'catalog:set_current_version' version.id %}"
+                          style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-secondary">Сделать текущей
+                        </button>
+                    </form>
+                    {% endif %}
+                    <!-- Кнопка удаления -->
+                    <form method="post" action="{% url 'catalog:delete_version' version.id %}"
+                          style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger"
+                                onclick="return confirm('Вы уверены?');">Удалить
+                        </button>
+                    </form>
+
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

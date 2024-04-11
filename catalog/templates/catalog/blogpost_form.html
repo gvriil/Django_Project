@@ -1,10 +1,22 @@
 {% extends 'catalog/base.html' %}
 {% block content %}
-<div class="container">
+<div class="container mt-3">
+    <h2>Create or Edit Blog Post</h2>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Сохранить</button>
+        {% for field in form %}
+            <div class="mb-3">
+                {{ field.label_tag }}  <!-- Displays the label -->
+                {{ field }}            <!-- Displays the field itself -->
+                {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-success">Submit</button>
     </form>
 </div>
 {% endblock %}
