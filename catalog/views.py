@@ -58,6 +58,8 @@ class ProductCreateView(CreateView):
 class ProductUpdateView(UpdateView):
     model = Product
     form_class = ProductForm
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
     template_name = 'catalog/product_form.html'
     success_url = reverse_lazy('catalog:home')
 
@@ -97,6 +99,8 @@ def delete_version(request, version_id):
 
 class ProductDeleteView(DeleteView):
     model = Product
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
     template_name = 'catalog/product_confirm_delete.html'
     success_url = reverse_lazy('catalog:home')
 
@@ -155,12 +159,19 @@ class ProductDetailView(DetailView):
     model = Product
     template_name = 'catalog/product_detail.html'
     context_object_name = 'product'
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         pk = self.kwargs.get('pk')
         context['top'] = Product.objects.order_by('-created_at').exclude(id=pk)[:4]
         return context
+
+    def get_object(self):
+        obj = super().get_object()
+        print(f"Loaded product: {obj.name} with slug {obj.slug}")
+        return obj
 
 
 class BlogPostListView(ListView):

@@ -34,8 +34,8 @@
 
     <div class="button-row">
         <a href="{% url 'catalog:product_add' %}" class="btn btn-sm btn-outline-secondary">добавить</a>
-        <a href="{% url 'catalog:product_update' product.id %}" class="btn btn-sm btn-outline-secondary">изменить</a>
-        <a href="{% url 'catalog:product_delete' product.id %}" class="btn btn-sm btn-outline-secondary">удалить</a>
+        <a href="{% url 'catalog:product_update' slug=product.slug %}" class="btn btn-sm btn-outline-secondary">изменить</a>
+        <a href="{% url 'catalog:product_delete' slug=product.slug %}" class="btn btn-sm btn-outline-secondary">удалить</a>
     </div>
 
     <div class="mt-3 mb-3">
@@ -51,7 +51,7 @@
                          class="card-img-top object-fit-cover" alt="{{ top_product.name }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ top_product.name }}</h5>
-                        <a href="{% url 'catalog:product_detail' top_product.id %}" class="btn btn-sm btn-outline-secondary">подробнее</a>
+                        <a href="{% url 'catalog:product_detail' top_product.slug %}" class="btn btn-sm btn-outline-secondary">подробнее</a>
                     </div>
                 </div>
             </div>

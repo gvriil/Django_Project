@@ -1,7 +1,12 @@
 {% extends 'catalog/base.html' %}
 {% block content %}
+<div class="button-row">
+        <a href="{% url 'catalog:product_add' %}" class="btn btn-sm btn-outline-secondary">добавить</a>
+    </div>
 <h2 class="mb-4">Каталог</h2>
+
 <div class="row">
+
     {% for product in products %}
     <div class="col-md-4">
         <div class="card mb-4 shadow-sm">
@@ -9,16 +14,18 @@
             <div class="card-body">
                 <h5>{{ product.name }}</h5>
                 {% if product.current_version %}
-                <p>Текущая версия: {{ product.current_version.version_number }}</p>
+                <p>текущая версия: {{ product.current_version.version_number }}</p>
                 {% else %}
                 <p></p>
                 {% endif %}
                 <p>{{ product.description }}</p>
+
                 <div class="btn-group">
-                    <a href="{% url 'catalog:product_detail' product.id %}"
+                    <a href="{% url 'catalog:product_detail' slug=product.slug %}"
                        class="btn btn-sm btn-outline-secondary">подробнее</a>
                     <a href="" class="btn btn-sm btn-outline-secondary">купить</a>
                 </div>
+                <h7 class="card-title pricing-card-title"> {{ product.price }} р. </h7>
             </div>
         </div>
     </div>
@@ -27,18 +34,15 @@
     {% endfor %}
 </div>
 <nav aria-label="Page navigation example">
-    ххх
     <ul class="pagination justify-content-center">
-        {% if products.has_previous %}
+        {% if page_obj.has_previous %}
         <li class="page-item"><a class="page-link" href="?page={{ products.previous_page_number }}">&laquo;</a>
         </li>
         {% endif %}
-        {% for i in products.paginator.page_range %}
-        <li class="page-item {% if products.number == i %}active{% endif %}"><a class="page-link"
-                                                                                href="?page={{ i }}">{{
-            i }}</a></li>
+        {% for i in page_obj.paginator.page_range %}
+        <li class="page-item {% if products.number == i %}active{% endif %}"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
         {% endfor %}
-        {% if products.has_next %}
+        {% if page_obj.has_next %}
         <li class="page-item"><a class="page-link" href="?page={{ products.next_page_number }}">&raquo;</a>
         </li>
         {% endif %}
