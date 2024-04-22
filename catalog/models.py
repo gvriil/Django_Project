@@ -45,7 +45,8 @@ class Product(models.Model):
     last_modified = models.DateTimeField(auto_now=True, verbose_name='дата последнего изменения')
     in_stock = models.BooleanField(default=True, verbose_name='в наличии')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, **NULLABLE,
-                                verbose_name='автор')
+                               verbose_name='автор')
+    is_published = models.BooleanField(default=False, verbose_name='опубликовано')
 
     def save(self, *args, **kwargs):
         # Генерируем и обновляем слаг при каждом сохранении объекта
@@ -136,7 +137,7 @@ class BlogPost(models.Model):
     is_published = models.BooleanField(default=False)
     views_count = models.IntegerField(default=0)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, **NULLABLE,
-                                verbose_name='автор')
+                               verbose_name='автор')
 
     # def save(self, *args, **kwargs):
     #     if not self.slug:  # If no slug is provided, generate one from the title

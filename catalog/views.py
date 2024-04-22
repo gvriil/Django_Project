@@ -1,8 +1,10 @@
 # catalog/views.py
 from django.contrib import messages
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.db import transaction
+from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.utils.text import slugify
@@ -57,13 +59,20 @@ class ProductCreateView(CreateView):
         return super().form_valid(form)
 
 
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(PermissionRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
     slug_field = 'slug'
     slug_url_kwarg = 'slug'
     template_name = 'catalog/product_form.html'
     success_url = reverse_lazy('catalog:home')
+
+    def dispatch(self, request, *args, **kwargs):
+        # Получаем объект продукта
+        obj = self.get_object()
+        if obj.author != self.request.user:
+            return HttpResponseForbidden()
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
@@ -112,6 +121,10 @@ class ProductListView(ListView):
     template_name = 'catalog/product_list.html'
     context_object_name = 'products'
     paginate_by = 9
+
+    def get_queryset(self):
+        # Возвращаем только опубликованные продукты
+        return Product.objects.filter(is_published=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

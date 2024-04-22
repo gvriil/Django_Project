@@ -1,8 +1,10 @@
 {% extends 'catalog/base.html' %}
 {% block content %}
 <div class="button-row">
-        <a href="{% url 'catalog:product_add' %}" class="btn btn-sm btn-outline-secondary">добавить</a>
-    </div>
+    {% if perms.catalog.add_product %}
+    <a href="{% url 'catalog:product_add' %}" class="btn btn-sm btn-outline-secondary">добавить</a>
+    {% endif %}
+</div>
 <h2 class="mb-4">Каталог</h2>
 
 <div class="row">
@@ -25,7 +27,7 @@
                        class="btn btn-sm btn-outline-secondary">подробнее</a>
                     <a href="" class="btn btn-sm btn-outline-secondary">купить</a>
                 </div>
-                <h7 class="card-title pricing-card-title"> {{ product.price }} р. </h7>
+                <h7 class="card-title pricing-card-title"> {{ product.price }} р.</h7>
             </div>
         </div>
     </div>
@@ -40,7 +42,9 @@
         </li>
         {% endif %}
         {% for i in page_obj.paginator.page_range %}
-        <li class="page-item {% if products.number == i %}active{% endif %}"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+        <li class="page-item {% if products.number == i %}active{% endif %}"><a class="page-link"
+                                                                                href="?page={{ i }}">{{
+            i }}</a></li>
         {% endfor %}
         {% if page_obj.has_next %}
         <li class="page-item"><a class="page-link" href="?page={{ products.next_page_number }}">&raquo;</a>
