@@ -133,8 +133,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = 'gavrilius@yandex.ru'
-EMAIL_HOST_PASSWORD = 'password'
+EMAIL_HOST_USER = 'gavrilius@ya.ru'
+EMAIL_HOST_PASSWORD = 'qdmhlqibyiotvmfs'
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
@@ -143,8 +143,4 @@ AUTH_USER_MODEL = 'users.User'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 
-EMAIL_HOST_USER = 'gavrilius@ya.ru'
-EMAIL_HOST_PASSWORD
-EMAIL_HOST
-EMAIL_PORT
-EMAIL_USE_SSL
+
