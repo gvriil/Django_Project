@@ -67,7 +67,7 @@ class PasswordResetView(View):
             email = form.cleaned_data['email']
             user = User.objects.filter(email=email).first()
             if user:
-                new_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+                new_password = ''.join(random.choices(string.ascii_letters + string.digits, k=20))
                 user.set_password(new_password)
                 user.save()
                 send_mail(

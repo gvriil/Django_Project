@@ -48,6 +48,8 @@ class ProductCreateView(CreateView):
         formset = context['formset']
         form.instance.slug = slugify(form.instance.name)
         self.object = form.save()
+        self.object.author = self.request.user
+        self.object.save()
 
         if formset.is_valid():
             formset.instance = self.object
@@ -217,6 +219,9 @@ class BlogPostCreateView(CreateView):
 
     def form_valid(self, form):
         form.instance.slug = slugify(form.instance.title)
+        self.object = form.save()
+        self.object.author = self.request.user
+        self.object.save()
         return super().form_valid(form)
 
 

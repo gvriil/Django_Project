@@ -4,6 +4,8 @@ from django.utils import timezone
 from django.utils.text import slugify
 from unidecode import unidecode
 
+from config import settings
+
 NULLABLE = {'blank': True, 'null': True}
 
 
@@ -42,6 +44,8 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='дата создания')
     last_modified = models.DateTimeField(auto_now=True, verbose_name='дата последнего изменения')
     in_stock = models.BooleanField(default=True, verbose_name='в наличии')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, **NULLABLE,
+                                verbose_name='автор')
 
     def save(self, *args, **kwargs):
         # Генерируем и обновляем слаг при каждом сохранении объекта
@@ -131,6 +135,8 @@ class BlogPost(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     is_published = models.BooleanField(default=False)
     views_count = models.IntegerField(default=0)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, **NULLABLE,
+                                verbose_name='автор')
 
     # def save(self, *args, **kwargs):
     #     if not self.slug:  # If no slug is provided, generate one from the title
