@@ -13,6 +13,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from config import settings
 from .forms import ProductForm, VersionInlineFormset, BlogPostForm
 from .models import Product, Contacts, BlogPost, Versions
+from .services import get_cached_products
 
 
 def home(request):
@@ -31,7 +32,7 @@ def home(request):
     return render(request, 'catalog/home.html', context)
 
 
-class ProductCreateView(CreateView):
+class ProductCreateView(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
     template_name = 'catalog/product_form.html'
@@ -59,7 +60,7 @@ class ProductCreateView(CreateView):
         return super().form_valid(form)
 
 
-class ProductUpdateView(PermissionRequiredMixin, UpdateView):
+class ProductUpdateView(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
     slug_field = 'slug'
@@ -108,7 +109,7 @@ def delete_version(request, version_id):
     return redirect(reverse('catalog:product_detail', args=[product_id]))
 
 
-class ProductDeleteView(DeleteView):
+class ProductDeleteView(PermissionRequiredMixin, LoginRequiredMixin, DeleteView):
     model = Product
     slug_field = 'slug'
     slug_url_kwarg = 'slug'
@@ -124,7 +125,8 @@ class ProductListView(ListView):
 
     def get_queryset(self):
         # Возвращаем только опубликованные продукты
-        return Product.objects.filter(is_published=True)
+        return get_cached_products()
+        # return Product.objects.filter(is_published=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
