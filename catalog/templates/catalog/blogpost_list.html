@@ -6,7 +6,9 @@
     <div class="row mb-5">
         <div class="col-12 d-flex justify-content-between align-items-center">
             <h2>Recent Posts</h2>
+            {% if perms.catalog.add_product %}
             <a href="{% url 'catalog:blogpost_add' %}" class="btn btn-primary">Новая публикация</a>
+            {% endif %}
         </div>
     </div>
     <div class="row g-4">

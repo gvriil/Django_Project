@@ -14,14 +14,15 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description', 'in_stock', 'slug')
+    list_display = ('name', 'description', 'in_stock', 'slug', 'is_published')
     list_filter = ('in_stock',)
     search_fields = ('name', 'description')
 
 
 @admin.register(Versions)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('product', 'version_number', 'version_name', 'is_current_version')
+    list_display = (
+        'product', 'version_number', 'version_name', 'is_current_version')
     list_filter = ('is_current_version', 'product')
 
 

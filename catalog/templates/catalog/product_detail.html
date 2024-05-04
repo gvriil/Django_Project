@@ -22,6 +22,13 @@
     color: #fff; /* Цвет текста при наведении */
 }
 
+
+
+
+
+
+
+
 </style>
 
 {% load custom_tags %}
@@ -30,12 +37,31 @@
     <h2>{{ product.name }}</h2>
     <p>{{ product.description }}</p>
     <p>Цена: {{ product.price }} р.</p>
+    <div>Perms: {{ perms }}</div>
+    <div>User: {{ user }}</div>
+    <div>Superuser: {{ user.is_superuser }}</div>
+
     <img src="{{ product.picture | image_filter }}" alt="{{ product.name }}" class="img-thumbnail">
 
     <div class="button-row">
-        <a href="{% url 'catalog:product_add' %}" class="btn btn-sm btn-outline-secondary">добавить</a>
-        <a href="{% url 'catalog:product_update' slug=product.slug %}" class="btn btn-sm btn-outline-secondary">изменить</a>
-        <a href="{% url 'catalog:product_delete' slug=product.slug %}" class="btn btn-sm btn-outline-secondary">удалить</a>
+        {% if object.author == request.user %}
+
+        {% if perms.catalog.add_product %}
+        <a href="{% url 'catalog:product_add' %}"
+           class="btn btn-sm btn-outline-secondary">добавить</a>
+        {% endif %}
+
+        {% if perms.catalog.change_product %}
+        <a href="{% url 'catalog:product_update' slug=product.slug %}"
+           class="btn btn-sm btn-outline-secondary">Изменить</a>
+
+        {% endif %}
+        {% if perms.catalog.delete_product %}
+        <a href="{% url 'catalog:product_delete' slug=product.slug %}"
+           class="btn btn-sm btn-outline-danger">удалить</a>
+        {% endif %}
+        {% endif %}
+
     </div>
 
     <div class="mt-3 mb-3">
@@ -51,7 +77,8 @@
                          class="card-img-top object-fit-cover" alt="{{ top_product.name }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ top_product.name }}</h5>
-                        <a href="{% url 'catalog:product_detail' top_product.slug %}" class="btn btn-sm btn-outline-secondary">подробнее</a>
+                        <a href="{% url 'catalog:product_detail' top_product.slug %}"
+                           class="btn btn-sm btn-outline-secondary">подробнее</a>
                     </div>
                 </div>
             </div>
