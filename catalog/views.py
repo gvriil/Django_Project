@@ -6,6 +6,7 @@ from django.core.paginator import Paginator
 from django.db import transaction
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
+
 from django.urls import reverse_lazy, reverse
 from django.utils.text import slugify
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -193,8 +194,7 @@ class ProductDetailView(DetailView):
 
 class BlogPostListView(ListView):
     model = BlogPost
-    template_name = 'blog/blogpost_list.html'
-    context_object_name = 'posts'
+    template_name = 'catalog/blogpost_list.html'
 
     def get_queryset(self):
         """Возвращаем только опубликованные статьи."""
@@ -205,11 +205,11 @@ class BlogPostDetailView(DetailView):
     model = BlogPost
     template_name = 'catalog/blogpost_detail.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        pk = self.kwargs.get('pk')
-        context['top'] = Product.objects.order_by('-created_at').exclude(id=pk)[:4]
-        return context
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     pk = self.kwargs.get('pk')
+    #     context['top'] = Product.objects.order_by('-created_at').exclude(id=pk)[:4]
+    #     return context
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
@@ -244,9 +244,11 @@ class BlogPostUpdateView(UpdateView):
     model = BlogPost
     fields = ['title', 'content', 'preview', 'created_at', 'is_published', 'views_count']
     template_name = 'catalog/blogpost_form.html/'
+    success_url = reverse_lazy('catalog:blogpost_list')
 
     def get_success_url(self):
         return reverse('catalog:blogpost_detail', kwargs={'slug': self.object.slug})
+
 
 
 class BlogPostDeleteView(DeleteView):
