@@ -38,6 +38,7 @@ class ProductCreateView(PermissionRequiredMixin, LoginRequiredMixin, CreateView)
     form_class = ProductForm
     template_name = 'catalog/product_form.html'
     success_url = reverse_lazy('catalog:home')
+    permission_required = 'catalog.add_product'
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
@@ -68,6 +69,7 @@ class ProductUpdateView(PermissionRequiredMixin, LoginRequiredMixin, UpdateView)
     slug_url_kwarg = 'slug'
     template_name = 'catalog/product_form.html'
     success_url = reverse_lazy('catalog:home')
+    permission_required = 'catalog.change_product'
 
     def dispatch(self, request, *args, **kwargs):
         # Получаем объект продукта
@@ -116,6 +118,7 @@ class ProductDeleteView(PermissionRequiredMixin, LoginRequiredMixin, DeleteView)
     slug_url_kwarg = 'slug'
     template_name = 'catalog/product_confirm_delete.html'
     success_url = reverse_lazy('catalog:home')
+    permission_required = 'catalog.delete_product'  # Разрешение на удаление
 
 
 class ProductListView(ListView):
