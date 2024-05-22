@@ -6,7 +6,9 @@
     <div class="row mb-5">
         <div class="col-12 d-flex justify-content-between align-items-center">
             <h2>Recent Posts</h2>
+            {% if perms.catalog.add_product %}
             <a href="{% url 'catalog:blogpost_add' %}" class="btn btn-primary">Новая публикация</a>
+            {% endif %}
         </div>
     </div>
     <div class="row g-4">
@@ -24,7 +26,8 @@
                     <p class="card-text">{{ post.content|truncatewords:20 }}</p>
                 </div>
                 <div class="card-footer text-muted">
-                    Создан <strong> {{ post.created_at|date:"Y-m-d" }} </strong>
+                    <strong> {{ post.created_at|date:"Y-M-d" }} </strong>
+
                 </div>
             </div>
         </div>

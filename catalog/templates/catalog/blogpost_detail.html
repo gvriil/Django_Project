@@ -1,5 +1,6 @@
 {% extends 'catalog/base.html' %}
 {% block content %}
+{% load crispy_forms_tags %}
 <div class="container">
     <h1>{{ object.title }}</h1>
     {% if object.preview %}

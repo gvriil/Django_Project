@@ -3,6 +3,9 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 from unidecode import unidecode
+
+from config import settings
+
 NULLABLE = {'blank': True, 'null': True}
 
 
@@ -19,7 +22,7 @@ class Category(models.Model):
         """
         Returns the category name and description as a string.
         """
-        return f'{self.name} {self.description}'
+        return f'{self.name} '
 
     class Meta:
         verbose_name = "категория"
@@ -33,7 +36,7 @@ class Product(models.Model):
     Includes information like name, description, image, price, and stock status.
     """
     name = models.CharField(max_length=100, verbose_name='наименование')
-    # slug = models.SlugField(max_length=200, unique=False, default='')
+    slug = models.SlugField(max_length=200, unique=True, default='')
     description = models.TextField(verbose_name='описание')
     picture = models.ImageField(upload_to='products/', verbose_name='изображение', **NULLABLE)
     category = models.ForeignKey(Category, verbose_name='категория', on_delete=models.CASCADE)
@@ -41,23 +44,62 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='дата создания')
     last_modified = models.DateTimeField(auto_now=True, verbose_name='дата последнего изменения')
     in_stock = models.BooleanField(default=True, verbose_name='в наличии')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, **NULLABLE,
+                               verbose_name='автор')
+    is_published = models.BooleanField(default=False, verbose_name='опубликовано')
 
-    # def save(self, *args, **kwargs):
-    #     if not self.slug:  # If no slug is provided, generate one from the title
-    #
-    #         self.slug = slugify(unidecode(self.name))
-    #     super(Product, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        # Генерируем и обновляем слаг при каждом сохранении объекта
+        self.slug = slugify(unidecode(self.name))
+        super().save(*args, **kwargs)
 
     def __str__(self):
         """
         Returns the product name and description as a string.
         """
-        return f'{self.name} {self.description}'
+        return f'{self.name} {self.description} {self.slug}'
 
     class Meta:
         verbose_name = "продукт"
         verbose_name_plural = "продукты"
         ordering = ('-created_at',)
+
+
+class Versions(models.Model):
+    product = models.ForeignKey(Product, related_name='versions', on_delete=models.CASCADE)
+    version_number = models.CharField(max_length=50)
+    version_name = models.CharField(max_length=255)
+    is_current_version = models.BooleanField(default=False)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['product'],
+                condition=models.Q(is_current_version=True),
+                name='unique_current_version_for_product'
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.version_name} (версия {self.version_number})"
+
+
+class Creator(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    name = models.CharField(max_length=250, verbose_name='автор')
+    town = models.CharField(**NULLABLE, max_length=250, verbose_name='город')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Специальность')
+    birth_day = models.DateField(**NULLABLE, verbose_name='дата рождения')
+
+    def __str__(self):
+        """
+        Returns the product name and description as a string.
+        """
+        return f'{self.name} {self.category}'
+
+    class Meta:
+        verbose_name = "автор"
+        verbose_name_plural = "авторы"
 
 
 class Contacts(models.Model):
@@ -94,12 +136,19 @@ class BlogPost(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     is_published = models.BooleanField(default=False)
     views_count = models.IntegerField(default=0)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, **NULLABLE,
+                               verbose_name='автор')
+
+    # def save(self, *args, **kwargs):
+    #     if not self.slug:  # If no slug is provided, generate one from the title
+    #
+    #         self.slug = slugify(unidecode(self.title))
+    #     super(BlogPost, self).save(*args, **kwargs)
 
     def save(self, *args, **kwargs):
-        if not self.slug:  # If no slug is provided, generate one from the title
-
-            self.slug = slugify(unidecode(self.title))
-        super(BlogPost, self).save(*args, **kwargs)
+        # Генерируем и обновляем слаг при каждом сохранении объекта
+        self.slug = slugify(unidecode(self.title))
+        super().save(*args, **kwargs)
 
     def __str__(self):
         """
